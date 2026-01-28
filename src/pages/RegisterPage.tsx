@@ -1,36 +1,56 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Sparkles, Mail, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { Sparkles, Mail, Lock, User, ArrowRight, Eye, EyeOff, UserCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import toast from 'react-hot-toast';
+import { UserRole } from '@/types';
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { register } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    role: 'Author' as UserRole,
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email || !password) {
+    // Validation
+    if (!formData.fullName || !formData.email || !formData.password || !formData.confirmPassword) {
       toast.error('Please fill in all fields');
+      return;
+    }
+    
+    if (formData.password.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return;
+    }
+    
+    if (formData.password !== formData.confirmPassword) {
+      toast.error('Passwords do not match');
       return;
     }
 
     setIsLoading(true);
     try {
-      await login({ email, password });
-      toast.success('Login successful!');
-      // Redirect will be handled by App.tsx based on user role
-      navigate('/dashboard');
+      await register(formData);
+      toast.success('Registration successful! Redirecting...');
+      setTimeout(() => {
+        navigate(`/dashboard/${formData.role.toLowerCase()}`);
+      }, 500);
     } catch (error: any) {
-      toast.error(error.message || 'Login failed');
+      toast.error(error.message || 'Registration failed');
     } finally {
       setIsLoading(false);
     }
@@ -58,32 +78,64 @@ export default function LoginPage() {
           {/* Title */}
           <div className="mb-8">
             <h1 className="text-3xl font-display font-bold text-surface-900">
-              Welcome back
+              Create an account
             </h1>
             <p className="text-surface-500 mt-2">
-              Sign in to access your conference dashboard
+              Get started with managing your research conferences
             </p>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
+              label="Full Name"
+              placeholder="Enter your full name"
+              value={formData.fullName}
+              onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+              leftIcon={<User className="w-4 h-4" />}
+              required
+            />
+
+            <Input
               label="Email"
               type="email"
               placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               leftIcon={<Mail className="w-4 h-4" />}
               required
             />
+
+            <div>
+              <label className="block text-sm font-medium text-surface-700 mb-2">
+                Role
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                {(['Admin', 'Volunteer', 'Reviewer', 'Author'] as UserRole[]).map((role) => (
+                  <button
+                    key={role}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, role })}
+                    className={`p-3 rounded-lg border-2 transition-all ${
+                      formData.role === role
+                        ? 'border-primary-500 bg-primary-50 text-primary-700'
+                        : 'border-surface-200 hover:border-surface-300'
+                    }`}
+                  >
+                    <UserCircle className="w-5 h-5 mx-auto mb-1" />
+                    <div className="text-sm font-medium">{role}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
 
             <div className="relative">
               <Input
                 label="Password"
                 type={showPassword ? 'text' : 'password'}
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Create a password"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 leftIcon={<Lock className="w-4 h-4" />}
                 required
               />
@@ -96,14 +148,23 @@ export default function LoginPage() {
               </button>
             </div>
 
-            <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 rounded border-surface-300 text-primary-500 focus:ring-primary-500"
-                />
-                <span className="text-sm text-surface-600">Remember me</span>
-              </label>
+            <div className="relative">
+              <Input
+                label="Confirm Password"
+                type={showConfirmPassword ? 'text' : 'password'}
+                placeholder="Confirm your password"
+                value={formData.confirmPassword}
+                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                leftIcon={<Lock className="w-4 h-4" />}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-9 text-surface-400 hover:text-surface-600"
+              >
+                {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
             </div>
 
             <Button 
@@ -113,29 +174,20 @@ export default function LoginPage() {
               rightIcon={<ArrowRight className="w-5 h-5" />}
               disabled={isLoading}
             >
-              {isLoading ? 'Signing In...' : 'Sign In'}
+              {isLoading ? 'Creating Account...' : 'Create Account'}
             </Button>
           </form>
 
           {/* Toggle */}
           <p className="text-center text-surface-500 mt-6">
-            Don't have an account?{' '}
+            Already have an account?{' '}
             <Link
-              to="/register"
+              to="/login"
               className="text-primary-600 hover:text-primary-700 font-semibold"
             >
-              Sign up
+              Sign in
             </Link>
           </p>
-
-          {/* Demo notice */}
-          <div className="mt-8 p-4 bg-primary-50 rounded-xl border border-primary-100">
-            <p className="text-sm text-primary-700">
-              <strong>Demo Credentials:</strong><br />
-              Email: admin@confero.io<br />
-              Password: admin123
-            </p>
-          </div>
         </motion.div>
       </div>
 
@@ -153,32 +205,35 @@ export default function LoginPage() {
             className="text-center max-w-lg"
           >
             <h2 className="text-4xl font-display font-bold mb-6">
-              Manage conferences with confidence
+              Join the conference community
             </h2>
             <p className="text-white/80 text-lg mb-12">
-              Join thousands of researchers and organizers who trust Confero 
-              for seamless abstract submissions, peer reviews, and event management.
+              Select your role and get access to powerful tools for managing
+              research conferences and collaborating with peers.
             </p>
 
-            {/* Features */}
-            <div className="grid grid-cols-2 gap-4 text-left">
+            {/* Role descriptions */}
+            <div className="space-y-4 text-left">
               {[
-                'Abstract Submission',
-                'Peer Review System',
-                'Schedule Management',
-                'Analytics Dashboard',
-              ].map((feature, i) => (
+                { role: 'Admin', desc: 'Full access to manage schedules and events' },
+                { role: 'Volunteer', desc: 'Help organize and coordinate activities' },
+                { role: 'Reviewer', desc: 'Review and evaluate submissions' },
+                { role: 'Author', desc: 'Submit and present research work' },
+              ].map((item, i) => (
                 <motion.div
-                  key={feature}
+                  key={item.role}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.5 + i * 0.1 }}
-                  className="flex items-center gap-2"
+                  className="flex items-start gap-3"
                 >
-                  <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
-                    <div className="w-2 h-2 rounded-full bg-white" />
+                  <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
+                    <UserCircle className="w-4 h-4" />
                   </div>
-                  <span className="text-sm">{feature}</span>
+                  <div>
+                    <div className="font-semibold">{item.role}</div>
+                    <div className="text-sm text-white/70">{item.desc}</div>
+                  </div>
                 </motion.div>
               ))}
             </div>
@@ -194,11 +249,6 @@ export default function LoginPage() {
             animate={{ y: [0, 15, 0] }}
             transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
             className="absolute bottom-32 left-16 w-16 h-16 rounded-xl bg-white/10 backdrop-blur-sm"
-          />
-          <motion.div
-            animate={{ y: [0, -10, 0] }}
-            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
-            className="absolute bottom-20 right-32 w-20 h-20 rounded-full bg-white/10 backdrop-blur-sm"
           />
         </div>
       </div>

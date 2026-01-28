@@ -1,15 +1,38 @@
 // User & Auth Types
-export type UserRole = 'admin' | 'reviewer' | 'submitter' | 'attendee';
+export type UserRole = 'Admin' | 'Volunteer' | 'Reviewer' | 'Author';
 
 export interface User {
   id: string;
+  uniqueUserId: string; // e.g., ADM-2026-001
   email: string;
-  name: string;
+  fullName: string;
+  name: string; // For backwards compatibility
+  passwordHash: string;
   avatar?: string;
   role: UserRole;
   organization?: string;
   bio?: string;
   createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface AuthSession {
+  user: User;
+  token: string;
+  expiresAt: Date;
+}
+
+export interface RegisterFormData {
+  fullName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  role: UserRole;
+}
+
+export interface LoginFormData {
+  email: string;
+  password: string;
 }
 
 // Abstract Submission Types
@@ -205,4 +228,59 @@ export interface TicketType {
   benefits: string[];
   available: number;
   sold: number;
+}
+
+// Schedule Management Types (for Admin)
+export interface GlobalEvent {
+  id: string;
+  title: string;
+  time: string;
+  location: string;
+  eventType: 'Global Event';
+  createdBy: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface TechnicalSession {
+  id: string;
+  sessionTitle: string;
+  timeSlot: string;
+  roomLocation: string;
+  sessionChairs: string;
+  papers: Paper[];
+  createdBy: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Paper {
+  id: string;
+  sessionId: string;
+  paperId: string;
+  paperTitle: string;
+  authors: string;
+  displayOrder: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// CSV Import Types
+export interface CSVImportRow {
+  sessionId: string;
+  paperId: string;
+  paperTitle: string;
+  authors: string;
+}
+
+export interface CSVImportResult {
+  success: boolean;
+  importedCount: number;
+  errors: CSVImportError[];
+}
+
+export interface CSVImportError {
+  line: number;
+  error: string;
+  row?: CSVImportRow;
 }
