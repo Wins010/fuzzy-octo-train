@@ -2,13 +2,17 @@ import { User, AbstractSubmission, ConferenceEvent, Notification, Review } from 
 
 export const mockUser: User = {
   id: 'user-1',
+  uniqueUserId: 'ADM-2024-001',
   email: 'admin@confero.io',
+  fullName: 'Dr. Sarah Mitchell',
   name: 'Dr. Sarah Mitchell',
+  passwordHash: btoa('admin123' + 'salt_confero_2026'),
   avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face',
-  role: 'admin',
+  role: 'Admin',
   organization: 'Stanford University',
   bio: 'Professor of Computer Science specializing in AI and Machine Learning',
   createdAt: new Date('2024-01-15'),
+  updatedAt: new Date('2024-01-15'),
 };
 
 export const mockSubmissions: AbstractSubmission[] = [

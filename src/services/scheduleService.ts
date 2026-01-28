@@ -1,4 +1,4 @@
-import { GlobalEvent, TechnicalSession, Paper, CSVImportRow, CSVImportResult } from '@/types';
+import { GlobalEvent, TechnicalSession, Paper, CSVImportResult } from '@/types';
 
 // Global Events Management
 export const getAllGlobalEvents = (): GlobalEvent[] => {

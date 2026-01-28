@@ -1,8 +1,9 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { useAuth } from '@/contexts/AuthContext';
 import Layout from '@/components/layout/Layout';
+import { ProtectedRoute } from '@/components/ProtectedRoute';
 import LandingPage from '@/pages/LandingPage';
-import DashboardPage from '@/pages/DashboardPage';
 import SubmissionsPage from '@/pages/SubmissionsPage';
 import SubmitAbstractPage from '@/pages/SubmitAbstractPage';
 import ReviewsPage from '@/pages/ReviewsPage';
@@ -11,8 +12,30 @@ import RegistrationPage from '@/pages/RegistrationPage';
 import AnalyticsPage from '@/pages/AnalyticsPage';
 import SettingsPage from '@/pages/SettingsPage';
 import LoginPage from '@/pages/LoginPage';
+import RegisterPage from '@/pages/RegisterPage';
+import ConferenceAgendaPage from '@/pages/ConferenceAgendaPage';
+import { AdminDashboard, VolunteerDashboard, ReviewerDashboard, AuthorDashboard } from '@/pages/dashboards';
+import { ScheduleManagementPage } from '@/pages/schedule-management';
 
 function App() {
+  const { user, isAuthenticated } = useAuth();
+
+  // Redirect to role-specific dashboard
+  const DashboardRedirect = () => {
+    if (!isAuthenticated || !user) {
+      return <Navigate to="/login" replace />;
+    }
+    
+    const roleRoutes = {
+      'Admin': '/dashboard/admin',
+      'Volunteer': '/dashboard/volunteer',
+      'Reviewer': '/dashboard/reviewer',
+      'Author': '/dashboard/author',
+    };
+    
+    return <Navigate to={roleRoutes[user.role] || '/dashboard/author'} replace />;
+  };
+
   return (
     <>
       <Toaster
@@ -42,13 +65,50 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route element={<Layout />}>
-          <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        
+        <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+          {/* Redirect /dashboard to role-specific dashboard */}
+          <Route path="/dashboard" element={<DashboardRedirect />} />
+          
+          {/* Role-specific dashboards */}
+          <Route path="/dashboard/admin" element={
+            <ProtectedRoute allowedRoles={['Admin']}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/dashboard/volunteer" element={
+            <ProtectedRoute allowedRoles={['Volunteer']}>
+              <VolunteerDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/dashboard/reviewer" element={
+            <ProtectedRoute allowedRoles={['Reviewer']}>
+              <ReviewerDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/dashboard/author" element={
+            <ProtectedRoute allowedRoles={['Author']}>
+              <AuthorDashboard />
+            </ProtectedRoute>
+          } />
+          
+          {/* Schedule Management (Admin only) */}
+          <Route path="/schedule-management" element={
+            <ProtectedRoute allowedRoles={['Admin']}>
+              <ScheduleManagementPage />
+            </ProtectedRoute>
+          } />
+          
+          {/* Conference Agenda (All authenticated users) */}
+          <Route path="/agenda" element={<ConferenceAgendaPage />} />
+          
+          {/* Existing routes */}
           <Route path="/submissions" element={<SubmissionsPage />} />
           <Route path="/submit" element={<SubmitAbstractPage />} />
           <Route path="/reviews" element={<ReviewsPage />} />
           <Route path="/schedule" element={<SchedulePage />} />
-          <Route path="/register" element={<RegistrationPage />} />
+          <Route path="/registration" element={<RegistrationPage />} />
           <Route path="/analytics" element={<AnalyticsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Route>
