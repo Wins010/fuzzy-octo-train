@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import { useStore } from '@/store/useStore';
 import {
   Calendar,
@@ -60,6 +62,9 @@ const getEventColor = (type: string) => {
 };
 
 export default function SchedulePage() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'Admin';
   const { events } = useStore();
   const [selectedDate, setSelectedDate] = useState(new Date('2024-06-15'));
   const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
@@ -108,9 +113,14 @@ export default function SchedulePage() {
           <Button variant="secondary" leftIcon={<Download className="w-4 h-4" />}>
             Export PDF
           </Button>
-          <Button leftIcon={<Plus className="w-4 h-4" />}>
-            Add Event
-          </Button>
+          {isAdmin && (
+            <Button 
+              leftIcon={<Plus className="w-4 h-4" />}
+              onClick={() => navigate('/schedule-management')}
+            >
+              Add Event
+            </Button>
+          )}
         </motion.div>
       </div>
 
