@@ -64,6 +64,7 @@ const getEventColor = (type: string) => {
 export default function SchedulePage() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const isAdmin = user?.role === 'Admin';
   const { events } = useStore();
   const [selectedDate, setSelectedDate] = useState(new Date('2024-06-15'));
   const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
@@ -112,7 +113,7 @@ export default function SchedulePage() {
           <Button variant="secondary" leftIcon={<Download className="w-4 h-4" />}>
             Export PDF
           </Button>
-          {user?.role === 'Admin' && (
+          {isAdmin && (
             <Button 
               leftIcon={<Plus className="w-4 h-4" />}
               onClick={() => navigate('/schedule-management')}
