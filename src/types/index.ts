@@ -1,5 +1,5 @@
 // User & Auth Types
-export type UserRole = 'Admin' | 'Volunteer' | 'Reviewer' | 'Author';
+export type UserRole = 'Admin' | 'Volunteer' | 'Reviewer' | 'Author' | 'Attendee';
 
 export interface User {
   id: string;

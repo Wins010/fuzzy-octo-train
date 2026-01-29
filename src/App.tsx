@@ -9,12 +9,13 @@ import SubmitAbstractPage from '@/pages/SubmitAbstractPage';
 import ReviewsPage from '@/pages/ReviewsPage';
 import SchedulePage from '@/pages/SchedulePage';
 import RegistrationPage from '@/pages/RegistrationPage';
+import RegistrationOptionsPage from '@/pages/RegistrationOptionsPage';
 import AnalyticsPage from '@/pages/AnalyticsPage';
 import SettingsPage from '@/pages/SettingsPage';
 import LoginPage from '@/pages/LoginPage';
 import RegisterPage from '@/pages/RegisterPage';
 import ConferenceAgendaPage from '@/pages/ConferenceAgendaPage';
-import { AdminDashboard, VolunteerDashboard, ReviewerDashboard, AuthorDashboard } from '@/pages/dashboards';
+import { AdminDashboard, VolunteerDashboard, ReviewerDashboard, AuthorDashboard, AttendeeDashboard } from '@/pages/dashboards';
 import { ScheduleManagementPage } from '@/pages/schedule-management';
 
 function App() {
@@ -31,9 +32,10 @@ function App() {
       'Volunteer': '/dashboard/volunteer',
       'Reviewer': '/dashboard/reviewer',
       'Author': '/dashboard/author',
+      'Attendee': '/dashboard/attendee',
     };
     
-    return <Navigate to={roleRoutes[user.role] || '/dashboard/author'} replace />;
+    return <Navigate to={roleRoutes[user.role] || '/dashboard/attendee'} replace />;
   };
 
   return (
@@ -66,6 +68,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/registration-options" element={<RegistrationOptionsPage />} />
         
         <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
           {/* Redirect /dashboard to role-specific dashboard */}
@@ -90,6 +93,11 @@ function App() {
           <Route path="/dashboard/author" element={
             <ProtectedRoute allowedRoles={['Author']}>
               <AuthorDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/dashboard/attendee" element={
+            <ProtectedRoute allowedRoles={['Attendee']}>
+              <AttendeeDashboard />
             </ProtectedRoute>
           } />
           

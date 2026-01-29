@@ -130,10 +130,20 @@ export default function LoginPage() {
 
           {/* Demo notice */}
           <div className="mt-8 p-4 bg-primary-50 rounded-xl border border-primary-100">
-            <p className="text-sm text-primary-700">
-              <strong>Demo Credentials:</strong><br />
-              Email: admin@confero.io<br />
-              Password: admin123
+            <p className="text-sm font-semibold text-primary-900 mb-2">Pre-seeded Demo Accounts:</p>
+            <div className="space-y-2 text-xs text-primary-700">
+              <div>
+                <strong>Admin:</strong> admin@confero.io / admin123
+              </div>
+              <div>
+                <strong>Reviewer:</strong> reviewer@confero.io / reviewer123
+              </div>
+              <div>
+                <strong>Volunteer:</strong> volunteer@confero.io / volunteer123
+              </div>
+            </div>
+            <p className="text-xs text-primary-600 mt-3 italic">
+              Authors and Attendees must create their own accounts
             </p>
           </div>
         </motion.div>
