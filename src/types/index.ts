@@ -235,9 +235,12 @@ export interface TicketType {
 export interface GlobalEvent {
   id: string;
   title: string;
-  time: string;
+  description?: string; // Optional description
+  time: string; // Legacy: time string format
+  startDateTime?: Date; // NEW: structured date/time
+  endDateTime?: Date; // NEW: structured date/time
   location: string;
-  eventType: 'Global Event';
+  eventType: 'Global Event' | 'keynote' | 'workshop' | 'networking' | 'break' | 'registration' | 'ceremony' | 'other';
   createdBy: string;
   createdAt: Date;
   updatedAt: Date;

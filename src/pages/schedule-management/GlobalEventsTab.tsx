@@ -3,7 +3,7 @@ import { Plus, Edit2, Trash2, Calendar, MapPin, Clock } from 'lucide-react';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Modal, { ModalFooter } from '@/components/ui/Modal';
-import Input from '@/components/ui/Input';
+import Input, { Textarea } from '@/components/ui/Input';
 import { GlobalEvent } from '@/types';
 import {
   getAllGlobalEvents,
@@ -14,8 +14,10 @@ import {
 
 interface EventFormData {
   title: string;
+  description?: string;
   time: string;
   location: string;
+  eventType: 'Global Event' | 'keynote' | 'workshop' | 'networking' | 'break' | 'registration' | 'ceremony' | 'other';
 }
 
 export default function GlobalEventsTab() {
@@ -24,8 +26,10 @@ export default function GlobalEventsTab() {
   const [editingEvent, setEditingEvent] = useState<GlobalEvent | null>(null);
   const [formData, setFormData] = useState<EventFormData>({
     title: '',
+    description: '',
     time: '',
     location: '',
+    eventType: 'Global Event',
   });
   const [errors, setErrors] = useState<Partial<EventFormData>>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -41,7 +45,13 @@ export default function GlobalEventsTab() {
 
   const openCreateModal = () => {
     setEditingEvent(null);
-    setFormData({ title: '', time: '', location: '' });
+    setFormData({ 
+      title: '', 
+      description: '',
+      time: '', 
+      location: '',
+      eventType: 'Global Event',
+    });
     setErrors({});
     setIsModalOpen(true);
   };
@@ -50,8 +60,10 @@ export default function GlobalEventsTab() {
     setEditingEvent(event);
     setFormData({
       title: event.title,
+      description: event.description || '',
       time: event.time,
       location: event.location,
+      eventType: event.eventType,
     });
     setErrors({});
     setIsModalOpen(true);
@@ -60,7 +72,13 @@ export default function GlobalEventsTab() {
   const closeModal = () => {
     setIsModalOpen(false);
     setEditingEvent(null);
-    setFormData({ title: '', time: '', location: '' });
+    setFormData({ 
+      title: '', 
+      description: '',
+      time: '', 
+      location: '',
+      eventType: 'Global Event',
+    });
     setErrors({});
   };
 
@@ -146,7 +164,17 @@ export default function GlobalEventsTab() {
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="mb-4">
-                    <h3 className="text-lg font-semibold text-surface-900">{event.title}</h3>
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="text-lg font-semibold text-surface-900">{event.title}</h3>
+                      {event.eventType !== 'Global Event' && (
+                        <span className="text-xs font-medium px-2 py-1 bg-primary-50 text-primary-700 rounded">
+                          {event.eventType}
+                        </span>
+                      )}
+                    </div>
+                    {event.description && (
+                      <p className="text-sm text-surface-600 mt-2">{event.description}</p>
+                    )}
                   </div>
                   <div>
                     <div className="space-y-2">
@@ -202,6 +230,32 @@ export default function GlobalEventsTab() {
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               error={errors.title}
             />
+            <Textarea
+              label="Description (Optional)"
+              placeholder="e.g., Join us for the opening ceremony of the conference..."
+              value={formData.description || ''}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData({ ...formData, description: e.target.value })}
+              rows={3}
+            />
+            <div>
+              <label className="block text-sm font-medium text-surface-700 mb-2">
+                Event Type
+              </label>
+              <select
+                value={formData.eventType}
+                onChange={(e) => setFormData({ ...formData, eventType: e.target.value as EventFormData['eventType'] })}
+                className="w-full px-4 py-2.5 border border-surface-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              >
+                <option value="Global Event">Global Event</option>
+                <option value="keynote">Keynote</option>
+                <option value="workshop">Workshop</option>
+                <option value="networking">Networking</option>
+                <option value="break">Break</option>
+                <option value="registration">Registration</option>
+                <option value="ceremony">Ceremony</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
             <Input
               label="Time"
               placeholder="e.g., 9:00 AM - 10:00 AM"
