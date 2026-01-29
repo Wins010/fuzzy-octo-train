@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '@/store/useStore';
 import { useAuth } from '@/contexts/AuthContext';
+import { AbstractSubmission } from '@/types';
 import {
   Search,
   Filter,
@@ -11,12 +12,11 @@ import {
   Eye,
   Edit,
   Trash2,
-  MoreVertical,
   Download,
   Users,
   Calendar,
 } from 'lucide-react';
-import Card, { CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Badge, { StatusBadge } from '@/components/ui/Badge';
@@ -65,7 +65,7 @@ export default function SubmissionsPage() {
     toast.success('Reviewers assigned successfully');
   };
 
-  const handleEditSubmission = (updates: Partial<typeof selectedSub>) => {
+  const handleEditSubmission = (updates: Partial<AbstractSubmission>) => {
     if (!selectedSubmission) return;
 
     updateSubmission(selectedSubmission, updates);
@@ -93,11 +93,6 @@ export default function SubmissionsPage() {
   const openDeleteConfirm = (submissionId: string) => {
     setSubmissionToDelete(submissionId);
     setShowDeleteConfirm(true);
-  };
-
-  const openAssignReviewers = (submissionId: string) => {
-    setSelectedSubmission(submissionId);
-    setShowAssignReviewersModal(true);
   };
 
   const openEditModal = (submissionId: string) => {
