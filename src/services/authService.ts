@@ -19,6 +19,7 @@ export const generateUniqueUserId = (role: UserRole): string => {
     'Volunteer': 'VOL',
     'Reviewer': 'REV',
     'Author': 'AUT',
+    'Attendee': 'ATT',
   }[role];
 
   // Get counter from localStorage
@@ -140,26 +141,58 @@ export const hasRole = (user: User | null, allowedRoles: UserRole[]): boolean =>
   return allowedRoles.includes(user.role);
 };
 
-// Initialize with a default admin user if no users exist
+// Initialize with default pre-seeded accounts if no users exist
 export const initializeDefaultUsers = (): void => {
   const users = getAllUsers();
   if (users.length === 0) {
-    // Create default admin user
-    const adminUser: User = {
-      id: 'admin-default',
-      uniqueUserId: 'ADM-2026-001',
-      email: 'admin@confero.io',
-      fullName: 'Dr. Sarah Mitchell',
-      name: 'Dr. Sarah Mitchell',
-      passwordHash: btoa('admin123' + 'salt_confero_2026'), // password: admin123
-      role: 'Admin',
-      organization: 'Stanford University',
-      bio: 'Professor of Computer Science specializing in AI and Machine Learning',
-      createdAt: new Date('2024-01-15'),
-      updatedAt: new Date('2024-01-15'),
-    };
+    const defaultUsers: User[] = [
+      // Admin account
+      {
+        id: 'admin-default',
+        uniqueUserId: 'ADM-2026-001',
+        email: 'admin@confero.io',
+        fullName: 'Dr. Sarah Mitchell',
+        name: 'Dr. Sarah Mitchell',
+        passwordHash: btoa('admin123' + 'salt_confero_2026'), // password: admin123
+        role: 'Admin',
+        organization: 'Stanford University',
+        bio: 'Professor of Computer Science specializing in AI and Machine Learning',
+        createdAt: new Date('2024-01-15'),
+        updatedAt: new Date('2024-01-15'),
+      },
+      // Reviewer account
+      {
+        id: 'reviewer-default',
+        uniqueUserId: 'REV-2026-001',
+        email: 'reviewer@confero.io',
+        fullName: 'Dr. James Wilson',
+        name: 'Dr. James Wilson',
+        passwordHash: btoa('reviewer123' + 'salt_confero_2026'), // password: reviewer123
+        role: 'Reviewer',
+        organization: 'MIT',
+        bio: 'Associate Professor specializing in Natural Language Processing',
+        createdAt: new Date('2024-01-15'),
+        updatedAt: new Date('2024-01-15'),
+      },
+      // Volunteer account
+      {
+        id: 'volunteer-default',
+        uniqueUserId: 'VOL-2026-001',
+        email: 'volunteer@confero.io',
+        fullName: 'Emily Chen',
+        name: 'Emily Chen',
+        passwordHash: btoa('volunteer123' + 'salt_confero_2026'), // password: volunteer123
+        role: 'Volunteer',
+        organization: 'UC Berkeley',
+        bio: 'Graduate student and conference volunteer coordinator',
+        createdAt: new Date('2024-01-15'),
+        updatedAt: new Date('2024-01-15'),
+      },
+    ];
     
-    localStorage.setItem('users', JSON.stringify([adminUser]));
+    localStorage.setItem('users', JSON.stringify(defaultUsers));
     localStorage.setItem('counter_Admin_2026', '1');
+    localStorage.setItem('counter_Reviewer_2026', '1');
+    localStorage.setItem('counter_Volunteer_2026', '1');
   }
 };

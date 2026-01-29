@@ -111,7 +111,7 @@ export default function RegisterPage() {
                 Role
               </label>
               <div className="grid grid-cols-2 gap-3">
-                {(['Admin', 'Volunteer', 'Reviewer', 'Author'] as UserRole[]).map((role) => (
+                {(['Author', 'Attendee'] as UserRole[]).map((role) => (
                   <button
                     key={role}
                     type="button"
@@ -215,10 +215,8 @@ export default function RegisterPage() {
             {/* Role descriptions */}
             <div className="space-y-4 text-left">
               {[
-                { role: 'Admin', desc: 'Full access to manage schedules and events' },
-                { role: 'Volunteer', desc: 'Help organize and coordinate activities' },
-                { role: 'Reviewer', desc: 'Review and evaluate submissions' },
-                { role: 'Author', desc: 'Submit and present research work' },
+                { role: 'Author', desc: 'Submit papers and present at the conference' },
+                { role: 'Attendee', desc: 'Attend sessions and network with peers' },
               ].map((item, i) => (
                 <motion.div
                   key={item.role}
