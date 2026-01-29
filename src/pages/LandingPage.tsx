@@ -107,9 +107,6 @@ export default function LandingPage() {
               <a href="#testimonials" className="text-sm font-medium text-surface-600 hover:text-surface-900 transition-colors">
                 Testimonials
               </a>
-              <a href="#pricing" className="text-sm font-medium text-surface-600 hover:text-surface-900 transition-colors">
-                Pricing
-              </a>
             </div>
             <div className="flex items-center gap-3">
               <Button variant="ghost" size="sm" onClick={() => navigate('/login')}>
