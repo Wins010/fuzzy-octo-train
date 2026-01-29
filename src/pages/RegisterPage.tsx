@@ -17,12 +17,19 @@ export default function RegisterPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
+  // Determine initial role based on URL parameter
+  const getInitialRole = (): UserRole => {
+    if (roleFromUrl === 'author') return 'Author';
+    if (roleFromUrl === 'attendee') return 'Attendee';
+    return 'Author'; // Default to Author if no valid role specified
+  };
+  
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     password: '',
     confirmPassword: '',
-    role: (roleFromUrl === 'author' ? 'Author' : roleFromUrl === 'attendee' ? 'Attendee' : 'Author') as UserRole,
+    role: getInitialRole(),
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
