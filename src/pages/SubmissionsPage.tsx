@@ -60,6 +60,12 @@ export default function SubmissionsPage() {
 
   const handleAssignReviewers = (reviewerIds: string[]) => {
     if (!selectedSubmission) return;
+    
+    // Verify user has Admin role
+    if (user?.role !== 'Admin') {
+      toast.error('Only administrators can assign reviewers');
+      return;
+    }
 
     updateSubmission(selectedSubmission, { reviewers: reviewerIds });
     toast.success('Reviewers assigned successfully');

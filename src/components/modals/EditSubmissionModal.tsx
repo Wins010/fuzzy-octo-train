@@ -176,7 +176,12 @@ export default function EditSubmissionModal({
             <Input
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addCategory())}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  addCategory();
+                }
+              }}
               placeholder="Add category"
             />
             <Button variant="secondary" onClick={addCategory} leftIcon={<Plus className="w-4 h-4" />}>
@@ -210,7 +215,12 @@ export default function EditSubmissionModal({
             <Input
               value={newKeyword}
               onChange={(e) => setNewKeyword(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addKeyword())}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  addKeyword();
+                }
+              }}
               placeholder="Add keyword"
             />
             <Button variant="secondary" onClick={addKeyword} leftIcon={<Plus className="w-4 h-4" />}>
