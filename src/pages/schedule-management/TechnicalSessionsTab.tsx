@@ -4,7 +4,8 @@ import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Modal, { ModalFooter } from '@/components/ui/Modal';
 import Input, { Textarea } from '@/components/ui/Input';
-import { TechnicalSession, Paper } from '@/types';
+import PaperSelector from '@/components/ui/PaperSelector';
+import { TechnicalSession, Paper, AbstractSubmission } from '@/types';
 import {
   getAllTechnicalSessions,
   saveTechnicalSession,
@@ -13,7 +14,11 @@ import {
   addPaperToSession,
   updatePaper,
   deletePaper,
+  assignPapersToSession,
+  getAssignedPapers,
 } from '@/services/scheduleService';
+import { getAcceptedPapers } from '@/services/paperService';
+import { useStore } from '@/store/useStore';
 import CSVImportModal from './CSVImportModal';
 
 interface SessionFormData {
@@ -21,6 +26,8 @@ interface SessionFormData {
   timeSlot: string;
   roomLocation: string;
   sessionChairs: string;
+  sessionTheme?: string;
+  assignedPaperIds: string[];
 }
 
 interface PaperFormData {
@@ -43,6 +50,8 @@ export default function TechnicalSessionsTab() {
     timeSlot: '',
     roomLocation: '',
     sessionChairs: '',
+    sessionTheme: '',
+    assignedPaperIds: [],
   });
   const [paperFormData, setPaperFormData] = useState<PaperFormData>({
     paperId: '',
@@ -82,6 +91,8 @@ export default function TechnicalSessionsTab() {
       timeSlot: '',
       roomLocation: '',
       sessionChairs: '',
+      sessionTheme: '',
+      assignedPaperIds: [],
     });
     setSessionErrors({});
     setIsSessionModalOpen(true);
@@ -94,6 +105,8 @@ export default function TechnicalSessionsTab() {
       timeSlot: session.timeSlot,
       roomLocation: session.roomLocation,
       sessionChairs: session.sessionChairs,
+      sessionTheme: session.sessionTheme || '',
+      assignedPaperIds: session.assignedPaperIds || [],
     });
     setSessionErrors({});
     setIsSessionModalOpen(true);
@@ -107,6 +120,8 @@ export default function TechnicalSessionsTab() {
       timeSlot: '',
       roomLocation: '',
       sessionChairs: '',
+      sessionTheme: '',
+      assignedPaperIds: [],
     });
     setSessionErrors({});
   };
@@ -139,11 +154,13 @@ export default function TechnicalSessionsTab() {
     try {
       if (editingSession) {
         updateTechnicalSession(editingSession.id, sessionFormData);
+        assignPapersToSession(editingSession.id, sessionFormData.assignedPaperIds);
       } else {
-        saveTechnicalSession({
+        const newSession = saveTechnicalSession({
           ...sessionFormData,
           createdBy: 'admin', // TODO: Get from auth context
         });
+        assignPapersToSession(newSession.id, sessionFormData.assignedPaperIds);
       }
       loadSessions();
       closeSessionModal();
@@ -352,66 +369,129 @@ export default function TechnicalSessionsTab() {
                 {/* Papers List */}
                 {isExpanded && (
                   <div className="p-6 bg-surface-50/50">
-                    <div className="flex items-center justify-between mb-4">
-                      <h4 className="text-sm font-medium text-surface-700">
-                        Papers ({session.papers.length})
-                      </h4>
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        onClick={() => openAddPaperModal(session.id)}
-                        leftIcon={<Plus className="w-3 h-3" />}
-                      >
-                        Add Paper
-                      </Button>
-                    </div>
-
-                    {session.papers.length === 0 ? (
-                      <div className="text-center py-8 bg-white rounded-xl border border-surface-100">
-                        <FileText className="w-8 h-8 text-surface-300 mx-auto mb-2" />
-                        <p className="text-sm text-surface-500">No papers in this session</p>
-                      </div>
-                    ) : (
-                      <div className="space-y-3">
-                        {session.papers
-                          .sort((a, b) => a.displayOrder - b.displayOrder)
-                          .map((paper) => (
-                            <div
-                              key={paper.id}
-                              className="bg-white rounded-lg border border-surface-100 p-4 hover:shadow-md transition-shadow"
-                            >
-                              <div className="flex items-start justify-between">
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-2 mb-1">
-                                    <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-1 rounded">
-                                      {paper.paperId}
-                                    </span>
+                    {/* Assigned Papers from Accepted Submissions */}
+                    {session.assignedPaperIds && session.assignedPaperIds.length > 0 && (
+                      <div className="mb-6">
+                        <h4 className="text-sm font-medium text-surface-700 mb-3">
+                          Assigned Papers ({session.assignedPaperIds.length})
+                        </h4>
+                        <div className="space-y-3">
+                          {session.assignedPaperIds.map((paperId) => {
+                            const submission = useStore.getState().submissions.find(s => s.id === paperId);
+                            if (!submission) return null;
+                            return (
+                              <div
+                                key={submission.id}
+                                className="bg-white rounded-lg border border-surface-100 p-4 hover:shadow-md transition-shadow"
+                              >
+                                <div className="flex items-start gap-3">
+                                  <FileText className="w-5 h-5 text-primary-500 mt-0.5" />
+                                  <div className="flex-1">
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-1 rounded">
+                                        {submission.paperId}
+                                      </span>
+                                      <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
+                                        Accepted
+                                      </span>
+                                    </div>
+                                    <h5 className="font-medium text-surface-900 mb-1">
+                                      {submission.title}
+                                    </h5>
+                                    <p className="text-sm text-surface-600">
+                                      {submission.authors.map(a => a.name).join(', ')}
+                                    </p>
                                   </div>
-                                  <h5 className="font-medium text-surface-900 mb-1">
-                                    {paper.paperTitle}
-                                  </h5>
-                                  <p className="text-sm text-surface-600">{paper.authors}</p>
-                                </div>
-                                <div className="flex gap-1">
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => openEditPaperModal(paper)}
-                                  >
-                                    <Edit2 className="w-3 h-3" />
-                                  </Button>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => handlePaperDelete(paper.id)}
-                                    className="text-red-500 hover:bg-red-50"
-                                  >
-                                    <Trash2 className="w-3 h-3" />
-                                  </Button>
                                 </div>
                               </div>
-                            </div>
-                          ))}
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Legacy Papers (CSV import) */}
+                    {session.papers.length > 0 && (
+                      <div>
+                        <div className="flex items-center justify-between mb-4">
+                          <h4 className="text-sm font-medium text-surface-700">
+                            Legacy Papers ({session.papers.length})
+                          </h4>
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            onClick={() => openAddPaperModal(session.id)}
+                            leftIcon={<Plus className="w-3 h-3" />}
+                          >
+                            Add Paper
+                          </Button>
+                        </div>
+
+                        <div className="space-y-3">
+                          {session.papers
+                            .sort((a, b) => a.displayOrder - b.displayOrder)
+                            .map((paper) => (
+                              <div
+                                key={paper.id}
+                                className="bg-white rounded-lg border border-surface-100 p-4 hover:shadow-md transition-shadow"
+                              >
+                                <div className="flex items-start justify-between">
+                                  <div className="flex-1">
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-1 rounded">
+                                        {paper.paperId}
+                                      </span>
+                                    </div>
+                                    <h5 className="font-medium text-surface-900 mb-1">
+                                      {paper.paperTitle}
+                                    </h5>
+                                    <p className="text-sm text-surface-600">{paper.authors}</p>
+                                  </div>
+                                  <div className="flex gap-1">
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => openEditPaperModal(paper)}
+                                    >
+                                      <Edit2 className="w-3 h-3" />
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => handlePaperDelete(paper.id)}
+                                      className="text-red-500 hover:bg-red-50"
+                                    >
+                                      <Trash2 className="w-3 h-3" />
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Empty State */}
+                    {(!session.assignedPaperIds || session.assignedPaperIds.length === 0) && session.papers.length === 0 && (
+                      <div className="text-center py-8 bg-white rounded-xl border border-surface-100">
+                        <FileText className="w-8 h-8 text-surface-300 mx-auto mb-2" />
+                        <p className="text-sm text-surface-500 mb-3">No papers in this session</p>
+                        <div className="flex gap-2 justify-center">
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            onClick={() => openEditSessionModal(session)}
+                          >
+                            Assign Papers
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            onClick={() => openAddPaperModal(session.id)}
+                          >
+                            Add Legacy Paper
+                          </Button>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -466,6 +546,21 @@ export default function TechnicalSessionsTab() {
                 setSessionFormData({ ...sessionFormData, sessionChairs: e.target.value })
               }
               error={sessionErrors.sessionChairs}
+            />
+            <Input
+              label="Session Theme/Track (Optional)"
+              placeholder="e.g., Machine Learning, Natural Language Processing"
+              value={sessionFormData.sessionTheme || ''}
+              onChange={(e) =>
+                setSessionFormData({ ...sessionFormData, sessionTheme: e.target.value })
+              }
+            />
+            <PaperSelector
+              label="Assigned Papers"
+              selectedPaperIds={sessionFormData.assignedPaperIds}
+              onChange={(paperIds) =>
+                setSessionFormData({ ...sessionFormData, assignedPaperIds: paperIds })
+              }
             />
           </div>
 
