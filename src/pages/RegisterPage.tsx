@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Sparkles, Mail, Lock, User, ArrowRight, Eye, EyeOff, UserCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -11,16 +11,25 @@ import { UserRole } from '@/types';
 export default function RegisterPage() {
   const navigate = useNavigate();
   const { register } = useAuth();
+  const [searchParams] = useSearchParams();
+  const roleFromUrl = searchParams.get('role');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Determine initial role based on URL parameter
+  const getInitialRole = (): UserRole => {
+    if (roleFromUrl === 'author') return 'Author';
+    if (roleFromUrl === 'attendee') return 'Attendee';
+    return 'Author'; // Default to Author if no valid role specified
+  };
   
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'Author' as UserRole,
+    role: getInitialRole(),
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -47,7 +56,7 @@ export default function RegisterPage() {
       await register(formData);
       toast.success('Registration successful! Redirecting...');
       setTimeout(() => {
-        navigate(`/dashboard/${formData.role.toLowerCase()}`);
+        navigate('/registration');
       }, 500);
     } catch (error: any) {
       toast.error(error.message || 'Registration failed');
