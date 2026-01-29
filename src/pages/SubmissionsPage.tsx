@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '@/store/useStore';
+import { useAuth } from '@/contexts/AuthContext';
+import { AbstractSubmission } from '@/types';
 import {
   Search,
   Filter,
@@ -10,25 +12,33 @@ import {
   Eye,
   Edit,
   Trash2,
-  MoreVertical,
   Download,
   Users,
   Calendar,
 } from 'lucide-react';
-import Card, { CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Badge, { StatusBadge } from '@/components/ui/Badge';
 import Modal from '@/components/ui/Modal';
+import AssignReviewersModal from '@/components/modals/AssignReviewersModal';
+import EditSubmissionModal from '@/components/modals/EditSubmissionModal';
 import { formatDistanceToNow, format } from 'date-fns';
+import toast from 'react-hot-toast';
+import { removePaperFromAllSessions } from '@/services/scheduleService';
 
 export default function SubmissionsPage() {
   const navigate = useNavigate();
-  const { submissions } = useStore();
+  const { user } = useAuth();
+  const { submissions, updateSubmission, deleteSubmission } = useStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [selectedSubmission, setSelectedSubmission] = useState<string | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showAssignReviewersModal, setShowAssignReviewersModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [submissionToDelete, setSubmissionToDelete] = useState<string | null>(null);
 
   const filteredSubmissions = submissions.filter((sub) => {
     const matchesSearch =
@@ -47,6 +57,54 @@ export default function SubmissionsPage() {
     { value: 'accepted', label: 'Accepted' },
     { value: 'rejected', label: 'Rejected' },
   ];
+
+  const handleAssignReviewers = (reviewerIds: string[]) => {
+    if (!selectedSubmission) return;
+    
+    // Verify user has Admin role
+    if (user?.role !== 'Admin') {
+      toast.error('Only administrators can assign reviewers');
+      return;
+    }
+
+    updateSubmission(selectedSubmission, { reviewers: reviewerIds });
+    toast.success('Reviewers assigned successfully');
+  };
+
+  const handleEditSubmission = (updates: Partial<AbstractSubmission>) => {
+    if (!selectedSubmission) return;
+
+    updateSubmission(selectedSubmission, updates);
+    toast.success('Submission updated successfully');
+  };
+
+  const handleDeleteSubmission = () => {
+    if (!submissionToDelete) return;
+
+    const submission = submissions.find(s => s.id === submissionToDelete);
+    
+    // Delete the submission
+    deleteSubmission(submissionToDelete);
+    
+    // If submission was accepted and has a paperId, remove from technical sessions
+    if (submission?.status === 'accepted' && submission?.paperId) {
+      removePaperFromAllSessions(submissionToDelete);
+    }
+
+    toast.success('Submission deleted successfully');
+    setShowDeleteConfirm(false);
+    setSubmissionToDelete(null);
+  };
+
+  const openDeleteConfirm = (submissionId: string) => {
+    setSubmissionToDelete(submissionId);
+    setShowDeleteConfirm(true);
+  };
+
+  const openEditModal = (submissionId: string) => {
+    setSelectedSubmission(submissionId);
+    setShowEditModal(true);
+  };
 
   return (
     <div className="space-y-6">
@@ -221,12 +279,14 @@ export default function SubmissionsPage() {
                           <Eye className="w-4 h-4" />
                         </button>
                         <button
+                          onClick={() => openEditModal(submission.id)}
                           className="p-2 rounded-lg text-surface-400 hover:text-primary-600 hover:bg-primary-50 transition-colors"
                           title="Edit"
                         >
                           <Edit className="w-4 h-4" />
                         </button>
                         <button
+                          onClick={() => openDeleteConfirm(submission.id)}
                           className="p-2 rounded-lg text-surface-400 hover:text-red-600 hover:bg-red-50 transition-colors"
                           title="Delete"
                         >
@@ -348,16 +408,71 @@ export default function SubmissionsPage() {
                   <Calendar className="w-4 h-4" />
                   <span>Submitted {format(selectedSub.submittedAt, 'MMM d, yyyy')}</span>
                 </div>
+                {selectedSub.reviewers && selectedSub.reviewers.length > 0 && (
+                  <div className="flex items-center gap-1">
+                    <Users className="w-4 h-4" />
+                    <span>{selectedSub.reviewers.length} reviewer(s) assigned</span>
+                  </div>
+                )}
               </div>
               <div className="flex gap-3">
                 <Button variant="secondary" onClick={() => setShowDetailsModal(false)}>
                   Close
                 </Button>
-                <Button>Assign Reviewers</Button>
+                {user?.role === 'Admin' && (
+                  <Button onClick={() => {
+                    setShowDetailsModal(false);
+                    setShowAssignReviewersModal(true);
+                  }}>
+                    Assign Reviewers
+                  </Button>
+                )}
               </div>
             </div>
           </div>
         )}
+      </Modal>
+
+      {/* Assign Reviewers Modal */}
+      {selectedSub && (
+        <AssignReviewersModal
+          isOpen={showAssignReviewersModal}
+          onClose={() => setShowAssignReviewersModal(false)}
+          currentReviewers={selectedSub.reviewers || []}
+          onAssign={handleAssignReviewers}
+        />
+      )}
+
+      {/* Edit Submission Modal */}
+      {selectedSub && (
+        <EditSubmissionModal
+          isOpen={showEditModal}
+          onClose={() => setShowEditModal(false)}
+          submission={selectedSub}
+          onSave={handleEditSubmission}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        title="Delete Submission"
+        size="sm"
+      >
+        <div className="space-y-4">
+          <p className="text-surface-600">
+            Are you sure you want to delete this submission? This action cannot be undone.
+          </p>
+          <div className="flex justify-end gap-3 pt-4">
+            <Button variant="ghost" onClick={() => setShowDeleteConfirm(false)}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={handleDeleteSubmission}>
+              Delete
+            </Button>
+          </div>
+        </div>
       </Modal>
     </div>
   );
