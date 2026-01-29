@@ -153,7 +153,7 @@ export default function RegistrationOptionsPage() {
                     size="lg"
                     className="w-full"
                     rightIcon={<ArrowRight className="w-5 h-5" />}
-                    onClick={() => navigate('/register')}
+                    onClick={() => navigate('/register?role=author')}
                   >
                     Register as Author
                   </Button>
@@ -220,7 +220,7 @@ export default function RegistrationOptionsPage() {
                     size="lg"
                     className="w-full bg-gradient-to-r from-accent-500 to-primary-500 hover:from-accent-600 hover:to-primary-600"
                     rightIcon={<ArrowRight className="w-5 h-5" />}
-                    onClick={() => navigate('/register')}
+                    onClick={() => navigate('/register?role=attendee')}
                   >
                     Register as Attendee
                   </Button>
