@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { User, AbstractSubmission, ConferenceEvent, Notification, Review } from '@/types';
 import { mockUser, mockSubmissions, mockEvents, mockNotifications, mockReviews } from '@/data/mockData';
+import { assignPaperIdIfAccepted, syncSubmissions } from '@/services/paperService';
+import { removePaperFromAllSessions } from '@/services/scheduleService';
 
 interface AppState {
   // User
@@ -45,17 +47,37 @@ export const useStore = create<AppState>((set) => ({
   // Submissions
   submissions: mockSubmissions,
   addSubmission: (submission) =>
-    set((state) => ({ submissions: [...state.submissions, submission] })),
+    set((state) => {
+      const processedSubmission = assignPaperIdIfAccepted(submission);
+      const newSubmissions = [...state.submissions, processedSubmission];
+      syncSubmissions(newSubmissions);
+      return { submissions: newSubmissions };
+    }),
   updateSubmission: (id, updates) =>
-    set((state) => ({
-      submissions: state.submissions.map((s) =>
-        s.id === id ? { ...s, ...updates } : s
-      ),
-    })),
+    set((state) => {
+      const updatedSubmissions = state.submissions.map((s) => {
+        if (s.id === id) {
+          const updated = { ...s, ...updates };
+          const processed = assignPaperIdIfAccepted(updated);
+          
+          // If status changed from 'accepted' to something else, remove from sessions
+          if (s.status === 'accepted' && updates.status && updates.status !== 'accepted') {
+            removePaperFromAllSessions(id);
+          }
+          
+          return processed;
+        }
+        return s;
+      });
+      syncSubmissions(updatedSubmissions);
+      return { submissions: updatedSubmissions };
+    }),
   deleteSubmission: (id) =>
-    set((state) => ({
-      submissions: state.submissions.filter((s) => s.id !== id),
-    })),
+    set((state) => {
+      const filteredSubmissions = state.submissions.filter((s) => s.id !== id);
+      syncSubmissions(filteredSubmissions);
+      return { submissions: filteredSubmissions };
+    }),
   
   // Events
   events: mockEvents,

@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useStore } from '@/store/useStore';
 import { getAllGlobalEvents, getAllTechnicalSessions } from '@/services/scheduleService';
 import { GlobalEvent, TechnicalSession } from '@/types';
 import Card, { CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
@@ -42,6 +43,7 @@ export default function ConferenceAgendaPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const isAdmin = user?.role === 'Admin';
+  const { submissions } = useStore();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('time');
@@ -87,6 +89,33 @@ export default function ConferenceAgendaPage() {
 
     // Add technical sessions
     technicalSessions.forEach((session: TechnicalSession) => {
+      // Combine legacy papers and assigned papers from submissions
+      const allPapers = [
+        // Legacy papers from CSV import
+        ...session.papers.map((paper) => ({
+          id: paper.id,
+          paperId: paper.paperId,
+          paperTitle: paper.paperTitle,
+          authors: paper.authors,
+        })),
+        // Assigned papers from accepted submissions
+        ...(session.assignedPaperIds || []).map((submissionId) => {
+          const submission = submissions.find(s => s.id === submissionId);
+          if (!submission || submission.status !== 'accepted') return null;
+          return {
+            id: submission.id,
+            paperId: submission.paperId || 'N/A',
+            paperTitle: submission.title,
+            authors: submission.authors.map(a => a.name).join(', '),
+          };
+        }).filter(Boolean) as Array<{
+          id: string;
+          paperId: string;
+          paperTitle: string;
+          authors: string;
+        }>,
+      ];
+
       items.push({
         id: session.id,
         type: 'technical',
@@ -94,12 +123,7 @@ export default function ConferenceAgendaPage() {
         time: session.timeSlot,
         location: session.roomLocation,
         sessionChairs: session.sessionChairs,
-        papers: session.papers.map((paper) => ({
-          id: paper.id,
-          paperId: paper.paperId,
-          paperTitle: paper.paperTitle,
-          authors: paper.authors,
-        })),
+        papers: allPapers,
         parsedTime: parseTime(session.timeSlot),
       });
     });

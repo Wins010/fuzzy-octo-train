@@ -40,6 +40,7 @@ export type SubmissionStatus = 'draft' | 'pending' | 'under_review' | 'accepted'
 
 export interface AbstractSubmission {
   id: string;
+  paperId?: string; // Auto-generated when status changes to 'accepted' (e.g., CONF2026-001)
   title: string;
   description: string;
   authors: Author[];
@@ -234,9 +235,12 @@ export interface TicketType {
 export interface GlobalEvent {
   id: string;
   title: string;
-  time: string;
+  description?: string; // Optional description
+  time: string; // Legacy: time string format
+  startDateTime?: Date; // NEW: structured date/time
+  endDateTime?: Date; // NEW: structured date/time
   location: string;
-  eventType: 'Global Event';
+  eventType: 'Global Event' | 'keynote' | 'workshop' | 'networking' | 'break' | 'registration' | 'ceremony' | 'other';
   createdBy: string;
   createdAt: Date;
   updatedAt: Date;
@@ -248,7 +252,9 @@ export interface TechnicalSession {
   timeSlot: string;
   roomLocation: string;
   sessionChairs: string;
-  papers: Paper[];
+  sessionTheme?: string; // Track/theme for the session
+  papers: Paper[]; // Legacy: manually entered papers via CSV
+  assignedPaperIds: string[]; // NEW: IDs of AbstractSubmission papers assigned to this session
   createdBy: string;
   createdAt: Date;
   updatedAt: Date;
@@ -283,4 +289,28 @@ export interface CSVImportError {
   line: number;
   error: string;
   row?: CSVImportRow;
+}
+
+// Unified Schedule Item Types (NEW - for enhanced schedule management)
+export type ScheduleItemType = 'event' | 'technical_session';
+export type EventType = 'keynote' | 'workshop' | 'networking' | 'break' | 'registration' | 'ceremony' | 'other';
+
+export interface ScheduleItem {
+  id: string;
+  type: ScheduleItemType;
+  title: string;
+  description?: string;
+  startDateTime: Date;
+  endDateTime: Date;
+  location: string;
+  // For general events
+  eventType?: EventType;
+  // For technical sessions
+  sessionTheme?: string;
+  sessionChair?: string;
+  assignedPaperIds?: string[]; // References to AbstractSubmission IDs with status='accepted'
+  // Metadata
+  createdBy: string; // User ID of admin who created it
+  createdAt: Date;
+  updatedAt: Date;
 }

@@ -37,6 +37,7 @@ export const mockSubmissions: AbstractSubmission[] = [
   },
   {
     id: 'sub-2',
+    paperId: 'CONF2026-001', // Auto-generated Paper ID for accepted papers
     title: 'Quantum Computing Applications in Drug Discovery',
     description: 'We explore the potential of quantum computing algorithms for accelerating molecular simulations in pharmaceutical research.',
     authors: [
@@ -51,6 +52,43 @@ export const mockSubmissions: AbstractSubmission[] = [
     submittedBy: 'user-3',
     submittedAt: new Date('2024-01-20'),
     updatedAt: new Date('2024-02-10'),
+  },
+  {
+    id: 'sub-6',
+    paperId: 'CONF2026-002',
+    title: 'Blockchain Technology for Secure Healthcare Data Sharing',
+    description: 'This paper proposes a blockchain-based framework for secure and transparent sharing of healthcare data across institutions.',
+    authors: [
+      { name: 'Dr. Thomas Zhang', email: 'tzhang@mit.edu', affiliation: 'MIT', isCorresponding: true },
+      { name: 'Dr. Jennifer Lee', email: 'jlee@stanford.edu', affiliation: 'Stanford University', isCorresponding: false },
+    ],
+    categories: ['Blockchain', 'Healthcare'],
+    keywords: ['blockchain', 'healthcare', 'data sharing', 'security'],
+    files: [
+      { id: 'f6', name: 'blockchain_healthcare.pdf', type: 'application/pdf', size: 2345678, url: '#', uploadedAt: new Date() },
+    ],
+    status: 'accepted',
+    submittedBy: 'user-7',
+    submittedAt: new Date('2024-01-25'),
+    updatedAt: new Date('2024-02-12'),
+  },
+  {
+    id: 'sub-7',
+    paperId: 'CONF2026-003',
+    title: 'Explainable AI for Medical Diagnosis',
+    description: 'An interpretable machine learning approach that provides transparent explanations for AI-driven medical diagnoses.',
+    authors: [
+      { name: 'Dr. Maria Rodriguez', email: 'mrodriguez@jhu.edu', affiliation: 'Johns Hopkins University', isCorresponding: true },
+    ],
+    categories: ['AI', 'Healthcare', 'XAI'],
+    keywords: ['explainable AI', 'medical diagnosis', 'interpretability'],
+    files: [
+      { id: 'f7', name: 'explainable_ai_medical.pdf', type: 'application/pdf', size: 2789012, url: '#', uploadedAt: new Date() },
+    ],
+    status: 'accepted',
+    submittedBy: 'user-8',
+    submittedAt: new Date('2024-02-01'),
+    updatedAt: new Date('2024-02-15'),
   },
   {
     id: 'sub-3',

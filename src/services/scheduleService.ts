@@ -64,6 +64,7 @@ export const saveTechnicalSession = (session: Omit<TechnicalSession, 'id' | 'cre
     ...session,
     id: `ts-${Date.now()}`,
     papers: [],
+    assignedPaperIds: session.assignedPaperIds || [], // Support new paper assignment system
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -278,4 +279,43 @@ const parseCSVLine = (line: string): string[] => {
   
   values.push(current.trim());
   return values;
+};
+
+// NEW: Assign papers from AbstractSubmission to Technical Session
+export const assignPapersToSession = (sessionId: string, paperIds: string[]): boolean => {
+  const sessions = getAllTechnicalSessions();
+  const session = sessions.find(s => s.id === sessionId);
+  if (!session) return false;
+  
+  // Update assigned paper IDs
+  session.assignedPaperIds = paperIds;
+  session.updatedAt = new Date();
+  
+  localStorage.setItem('technicalSessions', JSON.stringify(sessions));
+  return true;
+};
+
+// NEW: Get assigned papers for a session
+export const getAssignedPapers = (sessionId: string): string[] => {
+  const sessions = getAllTechnicalSessions();
+  const session = sessions.find(s => s.id === sessionId);
+  return session?.assignedPaperIds || [];
+};
+
+// NEW: Remove paper assignment from session when paper status changes
+export const removePaperFromAllSessions = (submissionId: string): void => {
+  const sessions = getAllTechnicalSessions();
+  let updated = false;
+  
+  sessions.forEach(session => {
+    if (session.assignedPaperIds && session.assignedPaperIds.includes(submissionId)) {
+      session.assignedPaperIds = session.assignedPaperIds.filter(id => id !== submissionId);
+      session.updatedAt = new Date();
+      updated = true;
+    }
+  });
+  
+  if (updated) {
+    localStorage.setItem('technicalSessions', JSON.stringify(sessions));
+  }
 };
