@@ -6,7 +6,7 @@ export const mockUser: User = {
   email: 'admin@confero.io',
   fullName: 'Dr. Sarah Mitchell',
   name: 'Dr. Sarah Mitchell',
-  passwordHash: btoa('admin123' + 'salt_confero_2026'),
+  passwordHash: btoa('admin123' + 'salt_confero_2025'),
   avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face',
   role: 'Admin',
   organization: 'Stanford University',
@@ -37,7 +37,7 @@ export const mockSubmissions: AbstractSubmission[] = [
   },
   {
     id: 'sub-2',
-    paperId: 'CONF2026-001', // Auto-generated Paper ID for accepted papers
+    paperId: 'CONF2025-001', // Auto-generated Paper ID for accepted papers
     title: 'Quantum Computing Applications in Drug Discovery',
     description: 'We explore the potential of quantum computing algorithms for accelerating molecular simulations in pharmaceutical research.',
     authors: [
@@ -55,7 +55,7 @@ export const mockSubmissions: AbstractSubmission[] = [
   },
   {
     id: 'sub-6',
-    paperId: 'CONF2026-002',
+    paperId: 'CONF2025-002',
     title: 'Blockchain Technology for Secure Healthcare Data Sharing',
     description: 'This paper proposes a blockchain-based framework for secure and transparent sharing of healthcare data across institutions.',
     authors: [
@@ -74,7 +74,7 @@ export const mockSubmissions: AbstractSubmission[] = [
   },
   {
     id: 'sub-7',
-    paperId: 'CONF2026-003',
+    paperId: 'CONF2025-003',
     title: 'Explainable AI for Medical Diagnosis',
     description: 'An interpretable machine learning approach that provides transparent explanations for AI-driven medical diagnoses.',
     authors: [

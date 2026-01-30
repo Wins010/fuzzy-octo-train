@@ -358,7 +358,7 @@ export default function AuthorDashboard() {
                 </div>
                 <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-100">
                   <p className="text-sm font-medium text-emerald-900 mb-1">Conference Date</p>
-                  <p className="text-xs text-emerald-700">July 10-12, 2025</p>
+                  <p className="text-xs text-emerald-700">June 15-17, 2025</p>
                 </div>
               </div>
             </CardContent>

@@ -24,7 +24,7 @@ export default function AttendeeDashboard() {
     type: 'Attendee Pass',
     price: 150,
     status: 'confirmed',
-    confirmationNumber: 'ATT-2026-12345',
+    confirmationNumber: 'ATT-2025-12345',
   };
 
   const upcomingSessions = [
