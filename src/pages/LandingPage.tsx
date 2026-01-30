@@ -430,7 +430,7 @@ export default function LandingPage() {
               <a href="#" className="hover:text-white transition-colors">Support</a>
               <a href="#" className="hover:text-white transition-colors">Contact</a>
             </div>
-            <p className="text-sm">© 2024 Confero. All rights reserved.</p>
+            <p className="text-sm">© 2025 Confero. All rights reserved.</p>
           </div>
         </div>
       </footer>

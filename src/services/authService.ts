@@ -3,7 +3,7 @@ import { User, UserRole, AuthSession, RegisterFormData, LoginFormData } from '@/
 // Simple hash function (in production, use proper bcrypt)
 const hashPassword = async (password: string): Promise<string> => {
   // Simple simulation of password hashing
-  return btoa(password + 'salt_confero_2026');
+  return btoa(password + 'salt_confero_2025');
 };
 
 const verifyPassword = async (password: string, hash: string): Promise<boolean> => {
@@ -27,7 +27,7 @@ export const generateUniqueUserId = (role: UserRole): string => {
   const counter = parseInt(localStorage.getItem(counterKey) || '0', 10) + 1;
   localStorage.setItem(counterKey, counter.toString());
 
-  // Format: PREFIX-YEAR-COUNTER (e.g., AUT-2026-001)
+  // Format: PREFIX-YEAR-COUNTER (e.g., AUT-2025-001)
   const paddedCounter = counter.toString().padStart(3, '0');
   return `${prefix}-${year}-${paddedCounter}`;
 };
@@ -149,11 +149,11 @@ export const initializeDefaultUsers = (): void => {
       // Admin account
       {
         id: 'admin-default',
-        uniqueUserId: 'ADM-2026-001',
+        uniqueUserId: 'ADM-2025-001',
         email: 'admin@confero.io',
         fullName: 'Dr. Sarah Mitchell',
         name: 'Dr. Sarah Mitchell',
-        passwordHash: btoa('admin123' + 'salt_confero_2026'), // password: admin123
+        passwordHash: btoa('admin123' + 'salt_confero_2025'), // password: admin123
         role: 'Admin',
         organization: 'Stanford University',
         bio: 'Professor of Computer Science specializing in AI and Machine Learning',
@@ -163,11 +163,11 @@ export const initializeDefaultUsers = (): void => {
       // Reviewer account
       {
         id: 'reviewer-default',
-        uniqueUserId: 'REV-2026-001',
+        uniqueUserId: 'REV-2025-001',
         email: 'reviewer@confero.io',
         fullName: 'Dr. James Wilson',
         name: 'Dr. James Wilson',
-        passwordHash: btoa('reviewer123' + 'salt_confero_2026'), // password: reviewer123
+        passwordHash: btoa('reviewer123' + 'salt_confero_2025'), // password: reviewer123
         role: 'Reviewer',
         organization: 'MIT',
         bio: 'Associate Professor specializing in Natural Language Processing',
@@ -177,11 +177,11 @@ export const initializeDefaultUsers = (): void => {
       // Volunteer account
       {
         id: 'volunteer-default',
-        uniqueUserId: 'VOL-2026-001',
+        uniqueUserId: 'VOL-2025-001',
         email: 'volunteer@confero.io',
         fullName: 'Emily Chen',
         name: 'Emily Chen',
-        passwordHash: btoa('volunteer123' + 'salt_confero_2026'), // password: volunteer123
+        passwordHash: btoa('volunteer123' + 'salt_confero_2025'), // password: volunteer123
         role: 'Volunteer',
         organization: 'UC Berkeley',
         bio: 'Graduate student and conference volunteer coordinator',
@@ -191,8 +191,8 @@ export const initializeDefaultUsers = (): void => {
     ];
     
     localStorage.setItem('users', JSON.stringify(defaultUsers));
-    localStorage.setItem('counter_Admin_2026', '1');
-    localStorage.setItem('counter_Reviewer_2026', '1');
-    localStorage.setItem('counter_Volunteer_2026', '1');
+    localStorage.setItem('counter_Admin_2025', '1');
+    localStorage.setItem('counter_Reviewer_2025', '1');
+    localStorage.setItem('counter_Volunteer_2025', '1');
   }
 };

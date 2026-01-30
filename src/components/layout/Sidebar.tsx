@@ -1,6 +1,7 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '@/store/useStore';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   LayoutDashboard,
   FileText,
@@ -16,20 +17,27 @@ import {
 } from 'lucide-react';
 import clsx from 'clsx';
 
-const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Submissions', href: '/submissions', icon: FileText },
-  { name: 'Submit Abstract', href: '/submit', icon: Send },
-  { name: 'Reviews', href: '/reviews', icon: ClipboardCheck },
-  { name: 'Schedule', href: '/schedule', icon: Calendar },
-  { name: 'Registration', href: '/register', icon: Users },
-  { name: 'Analytics', href: '/analytics', icon: BarChart3 },
-  { name: 'Settings', href: '/settings', icon: Settings },
-];
-
 export default function Sidebar() {
   const { sidebarOpen, setSidebarOpen } = useStore();
   const location = useLocation();
+  const { user } = useAuth();
+
+  // Check if user can access submissions
+  const canAccessSubmissions = user?.role === 'Author' || user?.role === 'Admin';
+
+  // Build navigation array based on user role
+  const navigation = [
+    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    ...(canAccessSubmissions ? [
+      { name: 'Submissions', href: '/submissions', icon: FileText },
+      { name: 'Submit Abstract', href: '/submit', icon: Send },
+    ] : []),
+    { name: 'Reviews', href: '/reviews', icon: ClipboardCheck },
+    { name: 'Schedule', href: '/schedule', icon: Calendar },
+    { name: 'Registration', href: '/register', icon: Users },
+    { name: 'Analytics', href: '/analytics', icon: BarChart3 },
+    { name: 'Settings', href: '/settings', icon: Settings },
+  ];
 
   return (
     <>

@@ -34,7 +34,7 @@ export default function SettingsPage() {
     bio: user?.bio || '',
   });
   const [brandingData, setBrandingData] = useState({
-    conferenceName: 'AI & Machine Learning Conference 2024',
+    conferenceName: 'AI & Machine Learning Conference 2025',
     primaryColor: '#636cf1',
     accentColor: '#d946ef',
   });
@@ -308,7 +308,7 @@ export default function SettingsPage() {
                     </label>
                     <div className="p-6 rounded-xl" style={{ background: `linear-gradient(135deg, ${brandingData.primaryColor}, ${brandingData.accentColor})` }}>
                       <h3 className="text-white text-xl font-bold">{brandingData.conferenceName}</h3>
-                      <p className="text-white/80 mt-2">June 15-17, 2024 • San Francisco, CA</p>
+                      <p className="text-white/80 mt-2">June 15-17, 2025 • San Francisco, CA</p>
                     </div>
                   </div>
 

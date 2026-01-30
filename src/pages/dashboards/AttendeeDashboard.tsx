@@ -24,7 +24,7 @@ export default function AttendeeDashboard() {
     type: 'Attendee Pass',
     price: 150,
     status: 'confirmed',
-    confirmationNumber: 'ATT-2026-12345',
+    confirmationNumber: 'ATT-2025-12345',
   };
 
   const upcomingSessions = [
@@ -34,7 +34,7 @@ export default function AttendeeDashboard() {
       speaker: 'Dr. Jane Smith',
       time: '9:00 AM - 10:00 AM',
       location: 'Main Hall',
-      date: 'June 15, 2024',
+      date: 'June 15, 2025',
     },
     {
       id: 2,
@@ -42,7 +42,7 @@ export default function AttendeeDashboard() {
       speaker: 'Prof. John Doe',
       time: '10:30 AM - 12:00 PM',
       location: 'Room A',
-      date: 'June 15, 2024',
+      date: 'June 15, 2025',
     },
     {
       id: 3,
@@ -50,19 +50,19 @@ export default function AttendeeDashboard() {
       speaker: 'Multiple Speakers',
       time: '2:00 PM - 3:30 PM',
       location: 'Room B',
-      date: 'June 15, 2024',
+      date: 'June 15, 2025',
     },
   ];
 
   const networkingEvents = [
-    { id: 1, name: 'Welcome Reception', time: 'June 14, 6:00 PM', location: 'Lobby' },
-    { id: 2, name: 'Coffee Break', time: 'June 15, 3:30 PM', location: 'Café Area' },
-    { id: 3, name: 'Gala Dinner', time: 'June 16, 7:00 PM', location: 'Ballroom' },
+    { id: 1, name: 'Welcome Reception', time: 'June 14, 2025, 6:00 PM', location: 'Lobby' },
+    { id: 2, name: 'Coffee Break', time: 'June 15, 2025, 3:30 PM', location: 'Café Area' },
+    { id: 3, name: 'Gala Dinner', time: 'June 16, 2025, 7:00 PM', location: 'Ballroom' },
   ];
 
   const conferenceInfo = {
-    name: 'AI & Machine Learning Conference 2024',
-    dates: 'June 15-17, 2024',
+    name: 'AI & Machine Learning Conference 2025',
+    dates: 'June 15-17, 2025',
     venue: 'San Francisco Convention Center',
     attendees: 500,
   };

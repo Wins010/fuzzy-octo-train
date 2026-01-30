@@ -112,8 +112,16 @@ function App() {
           <Route path="/agenda" element={<ConferenceAgendaPage />} />
           
           {/* Existing routes */}
-          <Route path="/submissions" element={<SubmissionsPage />} />
-          <Route path="/submit" element={<SubmitAbstractPage />} />
+          <Route path="/submissions" element={
+            <ProtectedRoute allowedRoles={['Author', 'Admin']}>
+              <SubmissionsPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/submit" element={
+            <ProtectedRoute allowedRoles={['Author', 'Admin']}>
+              <SubmitAbstractPage />
+            </ProtectedRoute>
+          } />
           <Route path="/reviews" element={<ReviewsPage />} />
           <Route path="/schedule" element={<SchedulePage />} />
           <Route path="/registration" element={<RegistrationPage />} />

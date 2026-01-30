@@ -350,15 +350,15 @@ export default function AuthorDashboard() {
               <div className="space-y-3">
                 <div className="p-3 rounded-lg bg-blue-50 border border-blue-100">
                   <p className="text-sm font-medium text-blue-900 mb-1">Submission Deadline</p>
-                  <p className="text-xs text-blue-700">March 31, 2024</p>
+                  <p className="text-xs text-blue-700">March 31, 2025</p>
                 </div>
                 <div className="p-3 rounded-lg bg-purple-50 border border-purple-100">
                   <p className="text-sm font-medium text-purple-900 mb-1">Notification Date</p>
-                  <p className="text-xs text-purple-700">May 15, 2024</p>
+                  <p className="text-xs text-purple-700">May 15, 2025</p>
                 </div>
                 <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-100">
                   <p className="text-sm font-medium text-emerald-900 mb-1">Conference Date</p>
-                  <p className="text-xs text-emerald-700">July 10-12, 2024</p>
+                  <p className="text-xs text-emerald-700">June 15-17, 2025</p>
                 </div>
               </div>
             </CardContent>

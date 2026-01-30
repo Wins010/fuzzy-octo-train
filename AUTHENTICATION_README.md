@@ -35,10 +35,10 @@ Role: Admin
 ### 2. Unique User ID Generation
 
 Each registered user receives a permanent unique ID with role-specific prefixes:
-- **Admin**: `ADM-YYYY-NNN` (e.g., `ADM-2026-001`)
-- **Volunteer**: `VOL-YYYY-NNN` (e.g., `VOL-2026-001`)
-- **Reviewer**: `REV-YYYY-NNN` (e.g., `REV-2026-001`)
-- **Author**: `AUT-YYYY-NNN` (e.g., `AUT-2026-001`)
+- **Admin**: `ADM-YYYY-NNN` (e.g., `ADM-2025-001`)
+- **Volunteer**: `VOL-YYYY-NNN` (e.g., `VOL-2025-001`)
+- **Reviewer**: `REV-YYYY-NNN` (e.g., `REV-2025-001`)
+- **Author**: `AUT-YYYY-NNN` (e.g., `AUT-2025-001`)
 
 The counter auto-increments per role and resets yearly.
 

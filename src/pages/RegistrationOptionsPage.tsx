@@ -85,10 +85,10 @@ export default function RegistrationOptionsPage() {
               Join the Conference
             </h1>
             <p className="text-xl text-surface-600 max-w-3xl mx-auto mb-2">
-              Choose your registration type and secure your spot at the AI & Machine Learning Conference 2024
+              Choose your registration type and secure your spot at the AI & Machine Learning Conference 2025
             </p>
             <p className="text-lg text-surface-500 max-w-2xl mx-auto mb-12">
-              San Francisco Convention Center • June 15-17, 2024
+              San Francisco Convention Center • June 15-17, 2025
             </p>
           </motion.div>
         </div>
@@ -290,7 +290,7 @@ export default function RegistrationOptionsPage() {
               </div>
               <span className="font-display font-bold text-xl text-white">Confero</span>
             </div>
-            <p className="text-sm">© 2024 Confero. All rights reserved.</p>
+            <p className="text-sm">© 2025 Confero. All rights reserved.</p>
           </div>
         </div>
       </footer>
