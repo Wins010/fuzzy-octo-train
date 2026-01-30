@@ -143,11 +143,11 @@ export default function RegistrationPage() {
         <Card className="bg-gradient-to-r from-primary-500 to-accent-500 text-white border-0">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h2 className="text-2xl font-bold mb-2">AI & Machine Learning Conference 2024</h2>
+              <h2 className="text-2xl font-bold mb-2">AI & Machine Learning Conference 2025</h2>
               <div className="flex flex-wrap gap-4 text-white/80">
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
-                  <span>June 15-17, 2024</span>
+                  <span>June 15-17, 2025</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4" />

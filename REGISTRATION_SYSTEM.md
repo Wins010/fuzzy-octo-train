@@ -13,19 +13,19 @@ These accounts are automatically seeded when the application starts for the firs
 #### 1. **Admin** - Dr. Sarah Mitchell
 - **Email:** admin@confero.io
 - **Password:** admin123
-- **User ID:** ADM-2026-001
+- **User ID:** ADM-2025-001
 - **Capabilities:** Full system access, schedule management, user management, analytics, system settings
 
 #### 2. **Reviewer** - Dr. James Wilson
 - **Email:** reviewer@confero.io
 - **Password:** reviewer123
-- **User ID:** REV-2026-001
+- **User ID:** REV-2025-001
 - **Capabilities:** Review submitted papers, access review interface, evaluate submissions
 
 #### 3. **Volunteer** - Emily Chen
 - **Email:** volunteer@confero.io
 - **Password:** volunteer123
-- **User ID:** VOL-2026-001
+- **User ID:** VOL-2025-001
 - **Capabilities:** Task management, volunteer coordination, event assistance
 
 ### Self-Registration Accounts
@@ -34,13 +34,13 @@ These roles must create their own accounts through the registration page:
 
 #### 4. **Author**
 - **Registration:** Self-service at `/register`
-- **User ID Format:** AUT-2026-XXX
+- **User ID Format:** AUT-2025-XXX
 - **Pricing:** $199 USD
 - **Capabilities:** Paper submission, conference presentation, author workshops, networking
 
 #### 5. **Attendee**
 - **Registration:** Self-service at `/register`
-- **User ID Format:** ATT-2026-XXX
+- **User ID Format:** ATT-2025-XXX
 - **Pricing:** $149 USD
 - **Capabilities:** Conference access, workshops, networking, all sessions
 
@@ -197,11 +197,11 @@ Navigate to `http://localhost:3000/registration-options` to see a detailed compa
 
 Each user receives a unique, permanent ID based on their role:
 
-- **Admin:** `ADM-YYYY-NNN` (e.g., ADM-2026-001)
-- **Reviewer:** `REV-YYYY-NNN` (e.g., REV-2026-001)
-- **Volunteer:** `VOL-YYYY-NNN` (e.g., VOL-2026-001)
-- **Author:** `AUT-YYYY-NNN` (e.g., AUT-2026-001)
-- **Attendee:** `ATT-YYYY-NNN` (e.g., ATT-2026-001)
+- **Admin:** `ADM-YYYY-NNN` (e.g., ADM-2025-001)
+- **Reviewer:** `REV-YYYY-NNN` (e.g., REV-2025-001)
+- **Volunteer:** `VOL-YYYY-NNN` (e.g., VOL-2025-001)
+- **Author:** `AUT-YYYY-NNN` (e.g., AUT-2025-001)
+- **Attendee:** `ATT-YYYY-NNN` (e.g., ATT-2025-001)
 
 Where:
 - `YYYY` = Current year
@@ -250,7 +250,7 @@ Password: volunteer123
 ```
 Email: john.smith@example.com
 Password: password123
-User ID: ATT-2026-001
+User ID: ATT-2025-001
 ```
 
 ## Troubleshooting
