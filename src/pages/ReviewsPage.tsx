@@ -4,7 +4,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useStore } from '@/store/useStore';
 import {
   Search,
-  Filter,
   Star,
   FileText,
   MessageSquare,
@@ -14,12 +13,11 @@ import {
   AlertCircle,
   User,
 } from 'lucide-react';
-import Card, { CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Input, { Textarea } from '@/components/ui/Input';
 import Badge, { StatusBadge } from '@/components/ui/Badge';
 import Modal from '@/components/ui/Modal';
-import { format } from 'date-fns';
 import { canViewReviews } from '@/utils/permissions';
 
 export default function ReviewsPage() {

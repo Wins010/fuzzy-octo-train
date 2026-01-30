@@ -8,7 +8,7 @@ export const canEditReviews = (role: UserRole): boolean => {
   return role === 'Reviewer' || role === 'Admin';
 };
 
-export const canViewSchedule = (role: UserRole): boolean => {
+export const canViewSchedule = (): boolean => {
   // All roles can view schedule
   return true;
 };
