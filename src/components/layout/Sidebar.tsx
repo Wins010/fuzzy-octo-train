@@ -24,6 +24,9 @@ export default function Sidebar() {
 
   // Check if user can access submissions
   const canAccessSubmissions = user?.role === 'Author' || user?.role === 'Admin';
+  
+  // Check if user can access reviews
+  const canAccessReviews = user?.role === 'Reviewer' || user?.role === 'Admin';
 
   // Build navigation array based on user role
   const navigation = [
@@ -32,7 +35,9 @@ export default function Sidebar() {
       { name: 'Submissions', href: '/submissions', icon: FileText },
       { name: 'Submit Abstract', href: '/submit', icon: Send },
     ] : []),
-    { name: 'Reviews', href: '/reviews', icon: ClipboardCheck },
+    ...(canAccessReviews ? [
+      { name: 'Reviews', href: '/reviews', icon: ClipboardCheck },
+    ] : []),
     { name: 'Schedule', href: '/schedule', icon: Calendar },
     { name: 'Registration', href: '/register', icon: Users },
     { name: 'Analytics', href: '/analytics', icon: BarChart3 },
