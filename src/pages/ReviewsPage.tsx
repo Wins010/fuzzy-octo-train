@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useAuth } from '@/contexts/AuthContext';
 import { useStore } from '@/store/useStore';
 import {
   Search,
@@ -19,8 +20,10 @@ import Input, { Textarea } from '@/components/ui/Input';
 import Badge, { StatusBadge } from '@/components/ui/Badge';
 import Modal from '@/components/ui/Modal';
 import { format } from 'date-fns';
+import { canViewReviews } from '@/utils/permissions';
 
 export default function ReviewsPage() {
+  const { user } = useAuth();
   const { submissions, reviews, addReview } = useStore();
   const [selectedSubmission, setSelectedSubmission] = useState<string | null>(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -38,9 +41,30 @@ export default function ReviewsPage() {
     { name: 'Significance', score: 7, maxScore: 10 },
   ]);
 
-  const assignedSubmissions = submissions.filter(
-    (s) => s.status === 'under_review' || s.status === 'pending'
-  );
+  // Check if user can view reviews
+  if (!user || !canViewReviews(user.role)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-red-600 mb-4">Access Denied</h1>
+          <p className="text-gray-600 mb-4">You don't have permission to view reviews.</p>
+          <a href="/dashboard" className="text-primary-600 hover:underline">Go to Dashboard</a>
+        </div>
+      </div>
+    );
+  }
+
+  const isAdmin = user.role === 'Admin';
+
+  // Filter submissions based on role
+  // Admins see all submissions under review
+  // Reviewers see only submissions assigned to them
+  const assignedSubmissions = submissions.filter((s) => {
+    if (s.status !== 'under_review' && s.status !== 'pending') return false;
+    if (isAdmin) return true;
+    // For reviewers, show only assigned submissions
+    return s.reviewers?.includes(user.id);
+  });
 
   const filteredSubmissions = assignedSubmissions.filter((sub) => {
     const matchesSearch = sub.title.toLowerCase().includes(searchQuery.toLowerCase());
@@ -61,13 +85,13 @@ export default function ReviewsPage() {
   };
 
   const handleSubmitReview = () => {
-    if (!selectedSubmission) return;
+    if (!selectedSubmission || !user) return;
 
     const newReview = {
       id: `rev-${Date.now()}`,
       submissionId: selectedSubmission,
-      reviewerId: 'user-1',
-      reviewerName: 'Dr. Sarah Mitchell',
+      reviewerId: user.id,
+      reviewerName: user.fullName,
       score: reviewScore,
       decision: reviewDecision,
       comments: reviewComments,
@@ -185,7 +209,7 @@ export default function ReviewsPage() {
       >
         {filteredSubmissions.map((submission, index) => {
           const subReviews = reviews.filter((r) => r.submissionId === submission.id);
-          const hasReviewed = subReviews.some((r) => r.reviewerId === 'user-1');
+          const hasReviewed = user ? subReviews.some((r) => r.reviewerId === user.id) : false;
 
           return (
             <motion.div

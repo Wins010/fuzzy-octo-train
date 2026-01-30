@@ -122,7 +122,11 @@ function App() {
               <SubmitAbstractPage />
             </ProtectedRoute>
           } />
-          <Route path="/reviews" element={<ReviewsPage />} />
+          <Route path="/reviews" element={
+            <ProtectedRoute allowedRoles={['Reviewer', 'Admin']}>
+              <ReviewsPage />
+            </ProtectedRoute>
+          } />
           <Route path="/schedule" element={<SchedulePage />} />
           <Route path="/registration" element={<RegistrationPage />} />
           <Route path="/analytics" element={<AnalyticsPage />} />

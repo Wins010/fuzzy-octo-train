@@ -26,6 +26,7 @@ import EditSubmissionModal from '@/components/modals/EditSubmissionModal';
 import { formatDistanceToNow, format } from 'date-fns';
 import toast from 'react-hot-toast';
 import { removePaperFromAllSessions } from '@/services/scheduleService';
+import { canViewReviewScores } from '@/utils/permissions';
 
 export default function SubmissionsPage() {
   const navigate = useNavigate();
@@ -39,6 +40,9 @@ export default function SubmissionsPage() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [submissionToDelete, setSubmissionToDelete] = useState<string | null>(null);
+
+  // Check if user can see review information
+  const canSeeReviews = user ? canViewReviewScores(user.role) : false;
 
   const filteredSubmissions = submissions.filter((sub) => {
     const matchesSearch =
@@ -408,7 +412,7 @@ export default function SubmissionsPage() {
                   <Calendar className="w-4 h-4" />
                   <span>Submitted {format(selectedSub.submittedAt, 'MMM d, yyyy')}</span>
                 </div>
-                {selectedSub.reviewers && selectedSub.reviewers.length > 0 && (
+                {canSeeReviews && selectedSub.reviewers && selectedSub.reviewers.length > 0 && (
                   <div className="flex items-center gap-1">
                     <Users className="w-4 h-4" />
                     <span>{selectedSub.reviewers.length} reviewer(s) assigned</span>
